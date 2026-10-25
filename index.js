@@ -6,6 +6,8 @@ let mouseY;
 function updateTongue() {
   if (mouseX === undefined || mouseY === undefined) return;
 
+  tongue.style.visibility = "visible";
+
   const frogBounds = frog.getBoundingClientRect();
   const pivotX = frogBounds.left + frogBounds.width * 0.512;
   const pivotY = frogBounds.top + frogBounds.height * 0.615;
@@ -23,6 +25,10 @@ function updateTongue() {
   tongue.style.left = `${pivotX - tongue.offsetWidth / 2}px`;
   tongue.style.top = `${pivotY - length}px`;
   tongue.style.transform = `rotate(${90 + angle}deg)`;
+}
+
+function removeTongue() {
+  tongue.style.visibility = "hidden";
 }
 
 document.addEventListener("mousemove", function (event) {

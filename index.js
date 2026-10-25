@@ -28,7 +28,7 @@ function updateTongue() {
 document.addEventListener("mousemove", function (event) {
   mouseX = event.clientX;
   mouseY = event.clientY;
-  updateTongue();
 });
 
 window.addEventListener("resize", updateTongue);
+window.setInterval(updateTongue, 3000);

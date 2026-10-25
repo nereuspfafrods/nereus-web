@@ -31,4 +31,4 @@ document.addEventListener("mousemove", function (event) {
 });
 
 window.addEventListener("resize", updateTongue);
-window.setInterval(updateTongue, 3000);
+window.setInterval(updateTongue, 1500);

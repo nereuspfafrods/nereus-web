@@ -10,6 +10,7 @@
     <script>
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       const audio_cxt = AudioCtx ? new AudioCtx() : null;
+      let soundStarted = false;
 
       function playSound() {
         if (!audio_cxt) return;
@@ -22,27 +23,53 @@
 
         gainNode.gain.setValueAtTime(0.001, audio_cxt.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(
-          0.5,
+          0.2,
           audio_cxt.currentTime + 0.1,
         );
         gainNode.gain.exponentialRampToValueAtTime(
           0.0001,
-          audio_cxt.currentTime + 0.7,
+          audio_cxt.currentTime + 100,
         );
 
         oscillator.connect(gainNode);
         gainNode.connect(audio_cxt.destination);
         oscillator.start();
-        oscillator.stop(audio_cxt.currentTime + 0.75);
+        oscillator.stop(audio_cxt.currentTime + 10);
       }
 
-      window.addEventListener("load", async () => {
-        if (audio_cxt && audio_cxt.state === "suspended") {
-          await audio_cxt.resume();
+      async function startSound() {
+        if (!audio_cxt || soundStarted) return;
+
+        try {
+          if (audio_cxt.state === "suspended") {
+            await audio_cxt.resume();
+          }
+        } catch (error) {
+          if (audio_cxt.state !== "suspended") {
+            throw error;
+          }
         }
 
+        if (audio_cxt.state !== "running") return;
+        soundStarted = true;
         playSound();
+        window.removeEventListener("pointerdown", startAfterInteraction);
+        window.removeEventListener("keydown", startAfterInteraction);
+      }
+
+      function startAfterInteraction() {
+        startSound().catch((error) =>
+          console.error("Could not play sound:", error),
+        );
+      }
+
+      window.addEventListener("load", () => {
+        startSound().catch((error) =>
+          console.error("Could not play sound:", error),
+        );
       });
+      window.addEventListener("pointerdown", startAfterInteraction);
+      window.addEventListener("keydown", startAfterInteraction);
     </script>
   </body>
 </html>
